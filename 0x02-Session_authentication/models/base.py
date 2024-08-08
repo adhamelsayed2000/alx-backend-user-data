@@ -2,14 +2,16 @@
 """ Base module
 """
 from datetime import datetime
-from typing import Type, List, Iterable, Optional
+from typing import TypeVar, List, Iterable, Optional
 from os import path
 import json
 import uuid
 
-
 TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 DATA = {}
+
+# Define a TypeVar for Base
+T = TypeVar('T', bound='Base')
 
 
 class Base():
@@ -35,17 +37,17 @@ class Base():
         else:
             self.updated_at = datetime.utcnow()
 
-    def __eq__(self, other: 'Base') -> bool:
+    def __eq__(self, other: object) -> bool:
         """ Equality
         """
         if type(self) != type(other):
             return False
-        if not isinstance(self, Base):
+        if not isinstance(other, Base):
             return False
         return (self.id == other.id)
 
     def to_json(self, for_serialization: bool = False) -> dict:
-        """ Convert the object a JSON dictionary
+        """ Convert the object to a JSON dictionary
         """
         result = {}
         for key, value in self.__dict__.items():
@@ -58,7 +60,7 @@ class Base():
         return result
 
     @classmethod
-    def load_from_file(cls):
+    def load_from_file(cls) -> None:
         """ Load all objects from file
         """
         s_class = cls.__name__
@@ -73,7 +75,7 @@ class Base():
                 DATA[s_class][obj_id] = cls(**obj_json)
 
     @classmethod
-    def save_to_file(cls):
+    def save_to_file(cls) -> None:
         """ Save all objects to file
         """
         s_class = cls.__name__
@@ -85,7 +87,7 @@ class Base():
         with open(file_path, 'w') as f:
             json.dump(objs_json, f)
 
-    def save(self):
+    def save(self) -> None:
         """ Save current object
         """
         s_class = self.__class__.__name__
@@ -93,7 +95,7 @@ class Base():
         DATA[s_class][self.id] = self
         self.__class__.save_to_file()
 
-    def remove(self):
+    def remove(self) -> None:
         """ Remove object
         """
         s_class = self.__class__.__name__
@@ -109,20 +111,20 @@ class Base():
         return len(DATA[s_class].keys())
 
     @classmethod
-    def all(cls) -> Iterable['Base']:
+    def all(cls) -> Iterable[T]:
         """ Return all objects
         """
         return cls.search()
 
     @classmethod
-    def get(cls, id: str) -> Optional['Base']:
+    def get(cls, id: str) -> Optional[T]:
         """ Return one object by ID
         """
         s_class = cls.__name__
         return DATA[s_class].get(id)
 
     @classmethod
-    def search(cls, attributes: dict = {}) -> List['Base']:
+    def search(cls, attributes: dict = {}) -> List[T]:
         """ Search all objects with matching attributes
         """
         s_class = cls.__name__
@@ -131,7 +133,7 @@ class Base():
             if len(attributes) == 0:
                 return True
             for k, v in attributes.items():
-                if (getattr(obj, k) != v):
+                if getattr(obj, k) != v:
                     return False
             return True
 
