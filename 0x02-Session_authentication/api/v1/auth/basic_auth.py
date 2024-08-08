@@ -12,8 +12,9 @@ from models.user import User
 class BasicAuth(Auth):
     """ Implement Basic Authorization protocol methods
     """
-    def extract_base64_authorization_header(self,
-                                            authorization_header: str) -> Optional[str]:
+
+    def extract_base64_authorization_header(
+            self, authorization_header: str) -> Optional[str]:
         """
         Extracts the Base64 part of the Authorization header for a Basic
         Authorization
@@ -27,8 +28,8 @@ class BasicAuth(Auth):
         token = authorization_header.split(" ")[-1]
         return token
 
-    def decode_base64_authorization_header(self,
-                                           base64_authorization_header: str) -> Optional[str]:
+    def decode_base64_authorization_header(
+            self, base64_authorization_header: str) -> Optional[str]:
         """
         Decode a Base64-encoded string
         """
@@ -43,10 +44,11 @@ class BasicAuth(Auth):
         except Exception:
             return None
 
-    def extract_user_credentials(self,
-                                 decoded_base64_authorization_header: str) -> Tuple[Optional[str], Optional[str]]:
+    def extract_user_credentials(
+        self, decoded_base64_authorization_header: str
+    ) -> Tuple[Optional[str], Optional[str]]:
         """
-        Returns user email and password from Base64 decoded value
+        Returns user email and password from Base64 decoded value.
         """
         if decoded_base64_authorization_header is None:
             return (None, None)
@@ -58,7 +60,10 @@ class BasicAuth(Auth):
         password = decoded_base64_authorization_header[len(email) + 1:]
         return (email, password)
 
-    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> Optional[User]:
+    def user_object_from_credentials(
+            self,
+            user_email: str,
+            user_pwd: str) -> Optional[User]:
         """
         Return a User instance based on email and password
         """

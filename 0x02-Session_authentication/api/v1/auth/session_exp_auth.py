@@ -16,6 +16,7 @@ class SessionExpAuth(SessionAuth):
     Definition of class SessionExpAuth that adds an
     expiration date to a Session ID
     """
+
     def __init__(self):
         """
         Initialize the class

@@ -11,6 +11,7 @@ class Auth:
     """
     Manages the API authentication
     """
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """
         Determines whether a given path requires authentication or not
